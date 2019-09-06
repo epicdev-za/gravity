@@ -20,7 +20,7 @@ describe('Gravity', function(){
 
     describe('Endpoints', function(){
         it('should return success', function(done){
-            client.get('/hello', (err, req, res, obj) => {
+            client.get('/auth/token', (err, req, res, obj) => {
                 assert.ifError(err);
                 console.log("Server returned: %j", obj);
                 done();
