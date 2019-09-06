@@ -1,0 +1,26 @@
+{
+    "name": "gravity",
+    "version": "1.0.0",
+    "description": "Restify based back-end API for Boost",
+    "main": "index.js",
+    "scripts": {
+        "test": "mocha"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/epicdev-za/gravity.git"
+    },
+    "author": "Kalden Swart",
+    "license": "GPL-3.0",
+    "bugs": {
+        "url": "https://github.com/epicdev-za/gravity/issues"
+    },
+    "homepage": "https://github.com/epicdev-za/gravity#readme",
+    "devDependencies": {
+        "mocha": "^6.2.0",
+        "restify-clients": "^2.6.7"
+    },
+    "dependencies": {
+        "restify": "^8.4.0"
+    }
+}
