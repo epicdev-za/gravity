@@ -28,11 +28,11 @@ function initializeServer(callback, port){
     server.use(restify.plugins.queryParser());
     server.use(restify.plugins.bodyParser());
 
-    //@todo: load endpoints
-
     server.listen(port, () => {
         if(typeof callback !== undefined){
             callback(server.name, server.url);
         }
     });
+
+    server.get('/hello', require("./endpoints/auth/token"));
 }

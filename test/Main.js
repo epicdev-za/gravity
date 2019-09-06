@@ -18,6 +18,16 @@ describe('Gravity', function(){
         });
     });
 
+    describe('Endpoints', function(){
+        it('should return success', function(done){
+            client.get('/hello', (err, req, res, obj) => {
+                assert.ifError(err);
+                console.log("Server returned: %j", obj);
+                done();
+            });
+        });
+    });
+
     describe('Stop', function(){
         it('should stop the gravity server', function(done){
             Gravity.stop(() => {
@@ -26,13 +36,3 @@ describe('Gravity', function(){
         });
     });
 });
-
-//
-// client.get('/echo/mark', (err, req, res, obj) => {
-//     assert.ifError(err);
-//     console.log("Server returned: %j", obj);
-// });
-//
-// Gravity.stop(() => {
-//     console.log("Server closed");
-// });
