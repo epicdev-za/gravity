@@ -6,28 +6,48 @@ module.exports = {
         throw new Error("Invalid data property");
     },
 
-    cleanNumeric(){
-
+    cleanNumeric(data){
+        data = data.toString();
+        data = data.replace(/[^0-9-]/g, '');
+        let negative = data.charAt(0) === '-';
+        data = data.replace(/-/g, '');
+        data = (negative) ? -data : data;
+        return parseInt(data);
     },
 
-    cleanAlpha(){
-
+    cleanAlpha(data){
+        data = data.toString();
+        data = data.replace(/[^a-zA-Z]/g, '');
+        return data;
     },
 
-    cleanAlphaNumeric(){
-
+    cleanAlphaNumeric(data){
+        data = data.toString();
+        data = data.replace(/[^a-zA-Z0-9]/g, '');
+        return data;
     },
 
-    cleanSymbols(){
-
+    cleanSymbols(data){
+        data = data.toString();
+        data = data.replace(/[^a-zA-Z0-9 \/:._,~\-!?@#\$%\^&\*]+/g, '');
+        return data;
     },
 
-    cleanExtraSymbols(){
-
+    cleanExtraSymbols(data){
+        data = data.toString();
+        data = data.replace(/[^a-zA-Z0-9 \/{}[\]:._~\-!@#\$%\^&\*áàâãªäÁÀÂÃÄÍÌÎÏíìîïéèêëÉÈÊËóòôõºöÓÒÔÕÖúùûüÚÙÛÜçÇñÑ]+/g, '')
+        return data;
     },
 
-    cleanPermalink(){
-
+    cleanPermalink(data){
+        data = data.toString();
+        data = data.replace(/ & /g, ' and ');
+        data = data.replace(/[^a-zA-Z0-9 ]/g, '');
+        data = data.trim();
+        data = data.replace(/ {2,}/g, ' ');
+        data = data.replace(/ /g, '-');
+        data = data.toLowerCase();
+        return data;
     }
 
 };
