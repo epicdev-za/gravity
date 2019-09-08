@@ -13,7 +13,12 @@ module.exports.start = function(callback){
 
 module.exports.stop = function(callback){
     if(server !== null){
-        server.close(callback);
+        server.close(() => {
+            server = null;
+            if(callback !== undefined) {
+                callback();
+            }
+        });
     }else{
         throw new Error("Server not initialized");
     }
@@ -30,7 +35,7 @@ function initializeServer(callback){
     server.use(restify.plugins.bodyParser());
 
     server.listen(config.port, () => {
-        if(typeof callback !== undefined){
+        if(callback !== undefined){
             callback(server.name, server.url);
         }
     });

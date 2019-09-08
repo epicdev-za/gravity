@@ -4,6 +4,8 @@
     "description": "Restify based back-end API for Boost",
     "main": "index.js",
     "scripts": {
+        "dev.client": "node _dev.client.js",
+        "dev.server": "node _dev.server.js",
         "test": "mocha --recursive"
     },
     "repository": {

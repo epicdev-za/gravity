@@ -5,7 +5,7 @@ module.exports = {
         'auth': {
             children: {
                 'token': {
-                    method: "get",
+                    method: "post",
                     handler: require("./endpoints/auth/token")
                 }
             }
