@@ -57,7 +57,14 @@ describe("SanitizerTest", function(){
 
     describe("Clean Permalink", function(){
         it("should convert any string into a permalink friendly version", function(){
-            assert.strictEqual(sanitizer.cleanPermalink("            This is a test p-er-malink & link      with 038478 num---bers  and special # $ ^&#^&@ 3#$    "), "this-is-a-test-permalink-and-link-with-038478-numbers-and-special-3");
+            assert.strictEqual(sanitizer.cleanPermalink("            This is a test p-er-malink & link      with 038478 num---bers  and special # $ ^&#^&@ 3#$    "), "this-is-a-test-p-er-malink-and-link-with-038478-num-bers-and-special-3");
+
+            let cleanedOne = sanitizer.cleanPermalink("test with spaces");
+            assert.strictEqual(sanitizer.cleanPermalink(cleanedOne), "test-with-spaces");
+
+            let cleanedTwo = sanitizer.cleanPermalink("test ---  -test");
+            assert.strictEqual(cleanedTwo, "test-test");
+            assert.strictEqual(sanitizer.cleanPermalink(cleanedTwo), "test-test");
         });
     });
 

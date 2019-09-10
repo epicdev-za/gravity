@@ -4,7 +4,6 @@
     "description": "Restify based back-end API for Boost",
     "main": "index.js",
     "scripts": {
-        "dev.client": "node _dev.client.js",
         "dev.server": "node _dev.server.js",
         "test": "mocha --recursive"
     },
@@ -23,6 +22,8 @@
         "restify-clients": "^2.6.7"
     },
     "dependencies": {
-        "restify": "^8.4.0"
+        "plasma": "github:epicdev-za/plasma#dev",
+        "restify": "^8.4.0",
+        "uuid": "^3.3.3"
     }
 }

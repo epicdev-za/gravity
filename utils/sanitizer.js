@@ -42,10 +42,11 @@ module.exports = {
     cleanPermalink(data){
         data = data.toString();
         data = data.replace(/ & /g, ' and ');
-        data = data.replace(/[^a-zA-Z0-9 ]/g, '');
+        data = data.replace(/[^a-zA-Z0-9\- ]/g, '');
         data = data.trim();
         data = data.replace(/ {2,}/g, ' ');
         data = data.replace(/ /g, '-');
+        data = data.replace(/-{2,}/g, '-');
         data = data.toLowerCase();
         return data;
     }

@@ -1,10 +1,13 @@
 let restify = require("restify");
 const config = require("./gravity.config");
+const Plasma = require("plasma");
+const uuidV4 = require("uuid/v4");
 
 let server = null;
 
 module.exports.start = function(callback){
     if(server === null){
+        initializeDB();
         initializeServer(callback);
     }else{
         throw new Error("Server already initialized");
@@ -23,6 +26,19 @@ module.exports.stop = function(callback){
         throw new Error("Server not initialized");
     }
 };
+
+module.exports.logError = function(err){
+    //@todo: Add error logging and notifying
+    console.log(err);
+    let currentStack = new Error();
+    console.log(currentStack.stack);
+    return uuidV4();
+};
+
+function initializeDB(){
+    let database = new Plasma();
+    database.connect(config.db);
+}
 
 function initializeServer(callback){
     server = restify.createServer({
