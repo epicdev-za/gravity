@@ -1,4 +1,4 @@
-const _project = require("../gravity.config");
+const _project = require("../../gravity.config");
 
 let config = {
     server_name: 'Gravity Server',
@@ -9,6 +9,10 @@ let config = {
         username: 'postgres',
         password: '',
         port: 5432
+    },
+    jwt: {
+        ttl: 900,
+        secret: ''
     },
     endpoints: {
         'auth': {
@@ -22,12 +26,11 @@ let config = {
     }
 };
 
+//@todo: Add ability to merge objects and arrays instead of overwriting and retain overwriting of other values
 for(let key in _project){
     if(_project.hasOwnProperty(key)){
         config[key] = _project[key];
     }
 }
-
-//@todo: Add ability to merge endpoints to include instead of overwriting
 
 module.exports = config;

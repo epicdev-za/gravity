@@ -1,5 +1,6 @@
 const assert = require("assert");
 const sanitizer = require("../../utils/sanitizer");
+const uuidV4 = require("uuid/v4");
 
 describe("SanitizerTest", function(){
 
@@ -65,6 +66,20 @@ describe("SanitizerTest", function(){
             let cleanedTwo = sanitizer.cleanPermalink("test ---  -test");
             assert.strictEqual(cleanedTwo, "test-test");
             assert.strictEqual(sanitizer.cleanPermalink(cleanedTwo), "test-test");
+        });
+    });
+
+    describe("Clean UUID", function(){
+        it("should verify the UUID v4 attempted is clean and valid", function(){
+            let uuid = uuidV4();
+            assert.strictEqual(sanitizer.cleanUUID(uuid), uuid);
+
+            assert.strictEqual(sanitizer.cleanUUID(undefined, true), undefined);
+            assert.strictEqual(sanitizer.cleanUUID(null, true), null);
+
+            assert.throws(() => {
+                sanitizer.cleanUUID("4hs4hj489-ash4-ahj4-lho5-984j-4hs84js949");
+            }, Error, "Invalid UUID");
         });
     });
 

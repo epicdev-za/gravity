@@ -49,6 +49,14 @@ module.exports = {
         data = data.replace(/-{2,}/g, '-');
         data = data.toLowerCase();
         return data;
+    },
+
+    cleanUUID(uuid, loose){
+        if(loose && (uuid === undefined || uuid === null)) return uuid;
+        if(uuid === undefined || !uuid.match(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/)){
+            throw new Error("Invalid UUID");
+        }
+        return uuid;
     }
 
 };

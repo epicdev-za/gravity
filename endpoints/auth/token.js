@@ -76,7 +76,8 @@ const grant_type = {
                                 });
                                 next();
                             }else{
-                                console.log(token);
+                                res.send(token);
+                                next();
                             }
                         });
                     }else{

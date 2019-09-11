@@ -22,7 +22,8 @@
         "restify-clients": "^2.6.7"
     },
     "dependencies": {
-        "plasma": "github:epicdev-za/plasma#dev",
+        "jsonwebtoken": "^8.5.1",
+        "plasma": "github:epicdev-za/plasma",
         "restify": "^8.4.0",
         "uuid": "^3.3.3"
     }
