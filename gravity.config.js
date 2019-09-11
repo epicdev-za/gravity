@@ -6,7 +6,7 @@ let config = {
     db: {
         database: 'gravity',
         host: 'localhost',
-        username: 'postgres',
+        user: 'postgres',
         password: '',
         port: 5432
     },
@@ -26,11 +26,23 @@ let config = {
     }
 };
 
-//@todo: Add ability to merge objects and arrays instead of overwriting and retain overwriting of other values
-for(let key in _project){
-    if(_project.hasOwnProperty(key)){
-        config[key] = _project[key];
+function merge(base, income){
+    for(let key in income){
+        if(income.hasOwnProperty(key)){
+            if(base.hasOwnProperty(key)){
+                if(Array.isArray(base[key])){
+                    base[key] = base[key].concat(income[key]);
+                }else if(typeof(base[key]) === typeof({})){
+                    base[key] = merge(base[key], income[key]);
+                }else{
+                    base[key] = income[key];
+                }
+            }else{
+                base[key] = income[key];
+            }
+        }
     }
+    return base;
 }
 
-module.exports = config;
+module.exports = merge(config, _project);
