@@ -78,7 +78,7 @@ function loadEndpoint(endpoints, parentPath = []){
             }
 
             if(endpoint.children !== undefined){
-                let childPaths = parentPath;
+                let childPaths = [].concat(parentPath);
                 childPaths.push(path);
                 loadEndpoint(endpoint.children, childPaths);
             }
