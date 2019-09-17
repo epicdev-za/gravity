@@ -1,7 +1,7 @@
 let restify = require("restify");
 const config = require("./gravity.config");
 const Plasma = require("plasma");
-const uuidV4 = require("uuid/v4");
+const GravityException = require("./GravityException");
 
 let server = null;
 
@@ -25,14 +25,6 @@ module.exports.stop = function(callback){
     }else{
         throw new Error("Server not initialized");
     }
-};
-
-module.exports.logError = function(err){
-    //@todo: Add error logging and notifying
-    console.log(err);
-    let currentStack = new Error();
-    console.log(currentStack.stack);
-    return uuidV4();
 };
 
 function initializeDB(){
@@ -74,7 +66,7 @@ function loadEndpoint(endpoints, parentPath = []){
             }
 
             if(typeof endpoint.method === typeof '' && endpoint.handler !== undefined){
-                server[endpoint.method](fullPath, endpoint.handler);
+                server[endpoint.method](fullPath, handlerErrorWrapper(endpoint.handler));
             }
 
             if(endpoint.children !== undefined){
@@ -84,6 +76,28 @@ function loadEndpoint(endpoints, parentPath = []){
             }
         }else{
             throw new Error("Endpoints configuration object somehow missing key '" + path.toString() + "' when its known to be in itself");
+        }
+    }
+}
+
+function handlerErrorWrapper(handler){
+    let internalResponder = function(e, req, res, next){
+        res.status(e.status);
+        res.send({
+            error: e.code,
+            error_description: e.description
+        });
+        next();
+    };
+
+    return function(req, res, next){
+        try{
+            handler(req, res, next);
+        }catch (e) {
+            if(!e instanceof GravityException){
+                e = new GravityException(500, undefined, e);
+            }
+            internalResponder(e, req, res, next);
         }
     }
 }
