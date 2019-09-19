@@ -81,23 +81,22 @@ function loadEndpoint(endpoints, parentPath = []){
 }
 
 function handlerErrorWrapper(handler){
-    let internalResponder = function(e, req, res, next){
-        res.status(e.status);
-        res.send({
-            error: e.code,
-            error_description: e.description
-        });
-        next();
-    };
-
     return function(req, res, next){
-        try{
-            handler(req, res, next);
-        }catch (e) {
-            if(!e instanceof GravityException){
-                e = new GravityException(500, undefined, e);
+        let wrapped_next = function(e){
+            if(e !== undefined){
+                if(!e instanceof GravityException){
+                    e = new GravityException(500, undefined, e);
+                }
+                if(e instanceof GravityException){
+                    res.status(e.status);
+                    res.send({
+                        error: e.code,
+                        error_description: e.description
+                    });
+                }
             }
-            internalResponder(e, req, res, next);
-        }
-    }
+            next();
+        };
+        handler(req, res, wrapped_next);
+    };
 }
