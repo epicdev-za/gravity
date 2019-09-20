@@ -21,10 +21,13 @@ class Application extends Entity{
         this.client_secret = sanitizer.cleanAlphaNumeric(this.client_secret);
     }
 
-    authenticate(ip, user_uuid, user_agent, callback){
+    authenticate(ip, user, user_agent, callback){
         const config = require("../gravity.config");
 
         let authentication = new Authentication().initialise();
+        if(user !== undefined){
+            authentication.user_uuid = user.uuid;
+        }
         authentication.application_uuid = this.uuid;
         authentication.ip_address = ip;
         authentication.user_agent = user_agent;
@@ -34,8 +37,8 @@ class Application extends Entity{
             let access_token = {
                 auth: authentication.uuid
             };
-            if(user_uuid !== undefined){
-                access_token.user = user_uuid
+            if(user !== undefined){
+                access_token.user = user
             }
 
             access_token = jwt.sign(access_token, config.jwt.secret, {

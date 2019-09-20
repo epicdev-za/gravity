@@ -18,13 +18,13 @@
     },
     "homepage": "https://github.com/epicdev-za/gravity#readme",
     "devDependencies": {
-        "mocha": "^6.2.0",
-        "restify-clients": "^2.6.7"
+        "mocha": "^6.2.0"
     },
     "dependencies": {
         "jsonwebtoken": "^8.5.1",
         "plasma": "github:epicdev-za/plasma",
         "restify": "^8.4.0",
+        "restify-clients": "^2.6.7",
         "uuid": "^3.3.3"
     }
 }

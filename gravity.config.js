@@ -14,6 +14,10 @@ let config = {
         ttl: 900,
         secret: ''
     },
+    sanctum: {
+        location: 'http://localhost:3002',
+        project_key: ''
+    },
     endpoints: {
         'auth': {
             children: {
