@@ -2,6 +2,7 @@ const Entity = require("plasma/PlasmaEntity");
 const Authentication = require("./Authentication");
 const sanitizer = require("../utils/sanitizer");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 
 class Application extends Entity{
 
@@ -45,7 +46,7 @@ class Application extends Entity{
                 expiresIn: config.jwt.ttl + 's'
             });
             let refresh_token = jwt.sign({
-                access_token: access_token
+                access_token: crypto.createHash('sha256').update(access_token).digest('hex')
             }, config.jwt.secret);
 
             callback(false, {

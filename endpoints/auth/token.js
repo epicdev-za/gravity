@@ -53,7 +53,7 @@ const grant_type = {
                     let application = r[0];
                     application.authenticate(req.connection.remoteAddress, undefined, req.headers['user-agent'], (err, token) => {
                         if(err){
-                            next(new GravityException(err));
+                            next(err);
                         }else{
                             res.send(token);
                             next();
@@ -103,15 +103,15 @@ const grant_type = {
                             password: password
                         }, function(err, creq, cres, obj){
                             if(err){
-                                if(cres.statusCode === 500){
-                                    next(new GravityException(new Error(err)));
+                                if(typeof cres === typeof undefined || cres === null){
+                                    next(err);
                                 }else{
                                     next(new GravityException(cres.statusCode, err.body.error, err.body.error_description));
                                 }
                             }else{
                                 application.authenticate(req.connection.remoteAddress, obj, req.headers['user-agent'], (err, token) => {
                                     if(err){
-                                        next(new GravityException(err));
+                                        next(err);
                                     }else{
                                         res.send(token);
                                         next();
@@ -120,7 +120,7 @@ const grant_type = {
                             }
                         });
                     }catch (err) {
-                        next(new GravityException(err));
+                        next(err);
                     }
                 }else{
                     next(new GravityException(401, "invalid_client", "Invalid client id and secret combination"));
