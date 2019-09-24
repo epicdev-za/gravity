@@ -84,8 +84,8 @@ function handlerErrorWrapper(handler){
     return function(req, res, next){
         let wrapped_next = function(e){
             if(e !== undefined){
-                if(!e instanceof GravityException){
-                    e = new GravityException(500, undefined, e);
+                if(!(e instanceof GravityException)){
+                    e = new GravityException(e);
                 }
                 if(e instanceof GravityException){
                     res.status(e.status);
