@@ -7,7 +7,7 @@ class GravityException extends Error{
         if(status instanceof Error){
             this.status = 500;
             this.description = "An internal server error occurred. Engineers have been notified, please try again later.";
-            this.code = this.log(object);
+            this.code = this.log(status);
         }else{
             this.status = status;
             this.description = object;
