@@ -1,6 +1,7 @@
 const Plasma = require("plasma");
 const sanitizer = require("../../utils/sanitizer");
 const Application = require("../../entities/Application");
+const Authentication = require("../../entities/Authentication");
 const clients = require("restify-clients");
 const GravityException = require("../../GravityException");
 
@@ -51,7 +52,7 @@ const grant_type = {
             }else{
                 if(r.length === 1){
                     let application = r[0];
-                    application.authenticate(req.connection.remoteAddress, undefined, req.headers['user-agent'], (err, token) => {
+                    Authentication.authenticate(req.connection.remoteAddress, application, undefined, req.headers['user-agent'], (err, token) => {
                         if(err){
                             next(err);
                         }else{
@@ -70,63 +71,66 @@ const grant_type = {
     password(req, res, next){
         const body = req.body;
 
-        let username, password, client_id, client_secret;
+        let username, password;
         try{
             username = extract(body, 'username');
             password = extract(body, 'password');
-            client_id = extract(body, 'client_id');
-            client_secret = extract(body, 'client_secret');
+
+            if(body['client_id'] !== undefined && body['client_secret'] !== undefined){
+                let client_id = sanitizer.cleanPermalink(body['client_id']);
+                let client_secret = sanitizer.cleanAlphaNumeric(body['client_secret']);
+
+                Plasma.getConnection.fetch(Application, "SELECT * FROM " + Application.getEntity() + " WHERE client_id = $1 AND client_secret = $2", [client_id, client_secret], function(err, r) {
+                    if(err){
+                        next(err);
+                    }else{
+                        if(r.length === 1){
+                            let application = r[0];
+                            authUser(req, res, next, username, password, application);
+                        }else{
+                            next(new GravityException(401, "invalid_client", "Invalid client id and secret combination."));
+                        }
+                    }
+                });
+            }else{
+                authUser(req, res, next, username, password);
+            }
         }catch (e) {
             next(e);
-            return;
         }
-
-        Plasma.getConnection.fetch(Application, "SELECT * FROM " + Application.getEntity() + " WHERE client_id = $1 AND client_secret = $2", [client_id, client_secret], (err, r) => {
-            if (err){
-                next(new GravityException(err));
-            }else{
-                if(r.length === 1){
-                    let application = r[0];
-
-                    try{
-                        const config = require("../../gravity.config");
-                        let project_key = sanitizer.cleanUUID(config.sanctum.project_key);
-                        let location = config.sanctum.location;
-
-                        let client = clients.createJsonClient({
-                            url: location
-                        });
-
-                        client.post('/sanctum/auth', {
-                            project: project_key,
-                            username: username,
-                            password: password
-                        }, function(err, creq, cres, obj){
-                            if(err){
-                                if(typeof cres === typeof undefined || cres === null){
-                                    next(err);
-                                }else{
-                                    next(new GravityException(cres.statusCode, err.body.error, err.body.error_description));
-                                }
-                            }else{
-                                application.authenticate(req.connection.remoteAddress, obj, req.headers['user-agent'], (err, token) => {
-                                    if(err){
-                                        next(err);
-                                    }else{
-                                        res.send(token);
-                                        next();
-                                    }
-                                });
-                            }
-                        });
-                    }catch (err) {
-                        next(err);
-                    }
-                }else{
-                    next(new GravityException(401, "invalid_client", "Invalid client id and secret combination"));
-                }
-            }
-        });
 
     }
 };
+
+function authUser(req, res, next, username, password, application){
+    const config = require("../../gravity.config");
+    let project_key = sanitizer.cleanUUID(config.sanctum.project_key);
+    let location = config.sanctum.location;
+
+    let client = clients.createJsonClient({
+        url: location
+    });
+
+    client.post('/sanctum/auth', {
+        project: project_key,
+        username: username,
+        password: password
+    }, function(err, creq, cres, obj){
+        if(err){
+            if(typeof cres === typeof undefined || cres === null){
+                next(err);
+            }else{
+                next(new GravityException(cres.statusCode, err.body.error, err.body.error_description));
+            }
+        }else{
+            Authentication.authenticate(req.connection.remoteAddress, application, obj, req.headers['user-agent'], (err, token) => {
+                if(err){
+                    next(err);
+                }else{
+                    res.send(token);
+                    next();
+                }
+            });
+        }
+    });
+}
