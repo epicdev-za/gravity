@@ -17,6 +17,9 @@ module.exports = function(req, res, next){
             case "password":
                 grant_type.password(req, res, next);
                 break;
+            case "refresh_token":
+                grant_type.refresh_token(req, res, next);
+                break;
             default:
                 next(new GravityException(400, "unsupported_grant_type", "'" + body['grant_type'] + "' is not supported."));
         }
@@ -99,6 +102,33 @@ const grant_type = {
             next(e);
         }
 
+    },
+
+    refresh_token(req, res, next){
+        const body = req.body;
+
+        let client_id, client_secret, refresh_token;
+        try{
+            client_id = sanitizer.cleanPermalink(extract(body, 'client_id'));
+            client_secret = sanitizer.cleanAlphaNumeric(extract(body, 'client_secret'));
+            refresh_token = sanitizer.cleanSymbols(extract(body, 'refresh_token'));
+        }catch (e) {
+            next(e);
+            return;
+        }
+
+        Plasma.getConnection.fetch(Application, "SELECT * FROM " + Application.getEntity() + " WHERE client_id = $1 AND client_secret = $2", [client_id, client_secret], function(err, r) {
+            if (err){
+                next(new GravityException(err));
+            }else{
+                if(r.length === 1){
+                    let application = r[0];
+                    //@todo: Add token refreshing (Need to obtain access token, hash it and verify it with refresh token)
+                }else{
+                    next(new GravityException(401, "invalid_client", "Invalid client id and secret combination."));
+                }
+            }
+        });
     }
 };
 
