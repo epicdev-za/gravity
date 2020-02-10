@@ -107,10 +107,11 @@ const grant_type = {
     refresh_token(req, res, next){
         const body = req.body;
 
-        let client_id, client_secret, refresh_token;
+        let client_id, client_secret, access_token, refresh_token;
         try{
             client_id = sanitizer.cleanPermalink(extract(body, 'client_id'));
             client_secret = sanitizer.cleanAlphaNumeric(extract(body, 'client_secret'));
+            access_token = sanitizer.cleanSymbols(extract(body, 'access_token'));
             refresh_token = sanitizer.cleanSymbols(extract(body, 'refresh_token'));
         }catch (e) {
             next(e);
@@ -123,7 +124,14 @@ const grant_type = {
             }else{
                 if(r.length === 1){
                     let application = r[0];
-                    //@todo: Add token refreshing (Need to obtain access token, hash it and verify it with refresh token)
+                    Authentication.refresh(access_token, refresh_token, (err, token) => {
+                        if(err){
+                            next(err);
+                        }else{
+                            res.send(token);
+                            next();
+                        }
+                    });
                 }else{
                     next(new GravityException(401, "invalid_client", "Invalid client id and secret combination."));
                 }

@@ -65,6 +65,37 @@ class Authentication extends Entity{
         });
     }
 
+    static refresh(access_token, refresh_token, callback){
+        const config = require("../gravity.config");
+
+        try{
+            let access_object = jwt.decode(access_token, config.jwt.secret); //@todo: Add token expiry verification
+
+            let refresh_hash = jwt.verify(refresh_token, config.jwt.secret).access_token;
+            let expected_hash = crypto.createHash('sha256').update(access_token).digest('hex');
+
+            if(refresh_hash === expected_hash){
+                access_token = jwt.sign(access_object, config.jwt.secret, {
+                    expiresIn: config.jwt.ttl + 's'
+                });
+                refresh_token = jwt.sign({
+                    access_token: crypto.createHash('sha256').update(access_token).digest('hex')
+                });
+
+                callback(false, {
+                    access_token: access_token,
+                    token_type: 'bearer',
+                    expires_in: config.jwt.ttl,
+                    refresh_token: refresh_token
+                });
+            }else{
+                callback(new Error("Invalid access and refresh token pair"));
+            }
+        }catch (e) {
+            callback(e);
+        }
+    }
+
 }
 
 module.exports = Authentication;
