@@ -1,4 +1,3 @@
-const gravity = require("./index");
 const _project = require("../../gravity.config");
 
 let config = {
@@ -31,4 +30,23 @@ let config = {
     }
 };
 
-module.exports = gravity.mergeConfigs(config, _project);
+function merge(base, income){
+    for(let key in income){
+        if(income.hasOwnProperty(key)){
+            if(base.hasOwnProperty(key)){
+                if(Array.isArray(base[key])){
+                    base[key] = base[key].concat(income[key]);
+                }else if(typeof(base[key]) === typeof({})){
+                    base[key] = merge(base[key], income[key]);
+                }else{
+                    base[key] = income[key];
+                }
+            }else{
+                base[key] = income[key];
+            }
+        }
+    }
+    return base;
+}
+
+module.exports = merge(config, _project);

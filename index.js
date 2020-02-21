@@ -27,25 +27,6 @@ module.exports.stop = function(callback){
     }
 };
 
-module.exports.mergeConfigs = function(base, income){
-    for(let key in income){
-        if(income.hasOwnProperty(key)){
-            if(base.hasOwnProperty(key)){
-                if(Array.isArray(base[key])){
-                    base[key] = base[key].concat(income[key]);
-                }else if(typeof(base[key]) === typeof({})){
-                    base[key] = this.mergeConfigs(base[key], income[key]);
-                }else{
-                    base[key] = income[key];
-                }
-            }else{
-                base[key] = income[key];
-            }
-        }
-    }
-    return base;
-};
-
 function initializeDB(){
     let database = new Plasma();
     database.connect(config.db);
