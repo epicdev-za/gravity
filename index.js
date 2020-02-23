@@ -1,4 +1,5 @@
 let restify = require("restify");
+const corsMiddleware = require("restify-cors-middleware");
 const config = require("./gravity.config");
 const Plasma = require("plasma");
 const GravityException = require("./GravityException");
@@ -38,6 +39,12 @@ function initializeServer(callback){
         version: process.env.npm_package_version
     });
 
+    const cors = corsMiddleware({
+        origins: ['*']
+    });
+
+    server.pre(cors.preflight);
+    server.use(cors.actual);
     server.use(restify.plugins.acceptParser(server.acceptable));
     server.use(restify.plugins.queryParser());
     server.use(restify.plugins.bodyParser());
