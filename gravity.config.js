@@ -11,23 +11,8 @@ let config = {
         password: '',
         port: 5432
     },
-    jwt: {
-        ttl: 900,
-        secret: ''
-    },
-    sanctum: {
-        location: 'http://localhost:3002',
-        project_key: ''
-    },
     endpoints: {
-        'auth': {
-            children: {
-                'token': {
-                    method: "post",
-                    handler: require("./endpoints/auth/token")
-                }
-            }
-        }
+
     }
 };
 

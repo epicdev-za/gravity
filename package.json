@@ -22,7 +22,6 @@
     },
     "dependencies": {
         "array-marriage": "github:epicdev-za/array-marriage#v1.0.0",
-        "jsonwebtoken": "^8.5.1",
         "plasma": "github:epicdev-za/plasma",
         "restify": "^8.4.0",
         "restify-clients": "^2.6.7",
